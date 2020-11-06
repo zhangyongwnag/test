@@ -12,23 +12,23 @@
       box-sizing: border-box;
       cursor: pointer;
       scroll-behavior: smooth;
+      /*增加弹性滚动,解决滚动不流畅的问题*/
+      -webkit-overflow-scrolling: touch;
     }
 
     .search {
       display: flex;
       width: 100vw;
       overflow: hidden;
-      position: fixed;
-      top: 20px;
-      left: 20px;
     }
 
     .search input {
       outline: none;
-      width: 88vw;
-      height: 50px;
+      width: 90vw;
+      margin: 20px 5vw 0;
+      height: 40px;
       border-radius: 4px;
-      border: 1px #999 solid;
+      border: 1px #ccc solid;
     }
 
     .search div {
@@ -36,12 +36,23 @@
       height: 30px;
       outline: none;
       border-radius: 4px;
-      border: 1px #999 solid;
+      border: 1px #ccc solid;
       padding: 5px 15px;
     }
 
     .search div:hover {
 
+    }
+
+    #result {
+      width: 90vw;
+      height: 86vh;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      margin: 10px 5vw 0;
+      border: 1px #ccc solid;
+      padding: 10px;
+      border-radius: 4px;
     }
   </style>
 </head>
@@ -51,7 +62,7 @@
     <input type="text" oninput="search(event)" id="input" placeholder="请输入要查找的问题">
   </from>
 </div>
-<div id="result" style="padding: 0 20px 50px;margin-top: 100px"></div>
+<div id="result">搜到这里会有题目：答案！</div>
 </body>
 <script>
   class topicData {
@@ -88,19 +99,21 @@
   let topic = new topicData()
 
   function search(event) {
+    let index_ = 1
     document.getElementById('result').innerText = ''
     let value = event.target.value
     if (!value) return
     let data = JSON.parse(JSON.stringify(topic.data))
-    data.map(item => {
+    data.map((item, index) => {
       if (item.problem.indexOf(value) != -1) {
         let div = document.createElement('div')
         div.style.marginTop = '20px'
-        div.innerHTML = `${item.problem} `
+        div.innerHTML = `${index_++}、${item.problem} `
         document.getElementById('result').append(div)
         let ele = document.createElement('div')
         ele.style.color = 'red'
-        ele.style.marginTop = '5px'
+        ele.style.margin = '5px 0 0 0px'
+        ele.style.textAlign = 'center'
         ele.innerHTML = `${item.options[item.result - 1]}`
         div.append(ele)
         // document.getElementById('input').value = ''
