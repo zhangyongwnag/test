@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>轩辕传奇-答题脚本</title>
+  <style>
+    * {
+      font-family: "Avenir", Helvetica, Arial, sans-serif;
+      padding: 0;
+      margin: 0;
+      box-sizing: border-box;
+      cursor: pointer;
+      scroll-behavior: smooth;
+    }
+
+    .search {
+      display: flex;
+      padding: 100px;
+      overflow: hidden;
+    }
+
+    .search input {
+      outline: none;
+      width: 200px;
+      height: 30px;
+      border-radius: 4px;
+      border: 1px #999 solid;
+    }
+
+    .search div {
+      width: 100px;
+      height: 30px;
+      outline: none;
+      border-radius: 4px;
+      border: 1px #999 solid;
+      padding: 5px 15px;
+    }
+
+    .search div:hover {
+
+    }
+  </style>
+</head>
+<body>
+<div class="search">
+  <from action="">
+    <input type="text" onkeyup="search_enter(event)">
+  </from>
+  <div onclick="search(event)">搜索</div>
+</div>
+</body>
+<script>
+  class topicData {
+    constructor() {
+      this.data = [];
+      this.getData();
+    }
+
+    getData() {
+      let xhr = new XMLHttpRequest()
+      let _self = this
+      xhr.open('get', 'https://game.gtimg.cn/images/xycq/cp/a20191209answer/js/date.json', true)
+      xhr.send()
+      xhr.dataType = 'json'
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState == 4) {
+          if (xhr.status == 200) {
+            let data = []
+            JSON.parse(xhr.responseText).map(item => {
+              let obj = {
+                problem: item.problem,
+                result: Number(item.answer),
+                options: [item.option1, item.option2, item.option3, item.option4, item.option5, item.option6, item.option7, item.option8, item.option9]
+              }
+              data.push(obj)
+            })
+            _self.data = data
+          }
+        }
+      }
+    }
+  }
+
+  let topic = new topicData()
+
+  function search(event) {
+    let value = event.target.value
+    if (!value) return
+    let data = JSON.parse(JSON.stringify(topic.data))
+    data.map(item => {
+      if (item.problem.indexOf(value) != -1) {
+        let div = document.createElement('div')
+        div.style.marginTop = '20px'
+        div.innerHTML = `${item.problem} `
+        div.style.display = 'flex'
+        document.body.append(div)
+        let ele = document.createElement('div')
+        ele.style.color = 'red'
+        ele.innerHTML = `${item.options[item.result - 1]}`
+        div.append(ele)
+      }
+    })
+  }
+
+  function search_enter(event) {
+    if (event.keyCode == '13') search(event)
+  }
+</script>
+</html>
